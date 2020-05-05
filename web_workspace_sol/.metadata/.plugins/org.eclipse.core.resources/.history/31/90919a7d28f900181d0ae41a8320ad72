@@ -1,0 +1,610 @@
+package com.sol.board.model.dao;
+
+import java.lang.Thread.State;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import com.sol.board.model.vo.Board;
+import com.sol.comment.model.vo.Comment;
+import com.sol.common.JDBCTemplate;
+import com.sol.file.model.vo.FileData;
+
+public class BoardDao {
+
+	public int insertBoard(Connection conn, Board board) {
+		// TODO Auto-generated method stub
+
+		int result = 0;
+
+		PreparedStatement pstmt = null;
+
+		String sql = "insert into board values(boardNo.nextval,?,0,0,0,?,?,?,0,0,?,sysdate,?,?,?,?)";
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, board.getName());
+			pstmt.setString(2, board.getGrade());
+			pstmt.setString(3, board.getLoginActive());
+			pstmt.setInt(4, board.getCreaterNo());
+			pstmt.setInt(5, board.getTypeNo());
+			pstmt.setString(6, board.getText());
+			pstmt.setString(7, board.getFileData().getFileName());
+			pstmt.setLong(8, board.getFileData().getFileSize());
+			pstmt.setString(9, board.getFileData().getFileFullPath());
+
+			result = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+
+		return result;
+
+	}
+
+	public Board selectOneBoard(Connection conn, int boardNo) {
+		// TODO Auto-generated method stub
+
+		String sql = "select * from board where board_no=?";
+
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		Board board = null;
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, boardNo);
+
+			rset = pstmt.executeQuery();
+
+			if (rset.next()) {
+				board = new Board();
+				board.setBoardNo(rset.getInt("board_no"));
+				board.setName(rset.getString("board_name"));
+				board.setHits(rset.getInt("board_hits"));
+				board.setCommentNo(rset.getInt("board_comment_no"));
+				board.setSelectedComment(rset.getInt("board_selected_comment"));
+				board.setGrade(rset.getString("board_grade"));
+				board.setCreaterNo(rset.getInt("board_creater_no"));
+				board.setTypeNo(rset.getInt("board_type_no"));
+				board.setCreateDate(rset.getString("board_create_date"));
+				board.setText(rset.getString("board_text"));
+				board.setStateNo(rset.getInt("board_state_no"));
+				board.setLoginActive(rset.getString("board_login_active"));
+				
+				if(rset.getString("file_name")!=null) {
+				
+				FileData fileData = new FileData();
+				fileData.setFileFullPath(rset.getString("file_full_path"));
+				fileData.setFileName(rset.getString("file_name"));
+				fileData.setFileSize(rset.getLong("file_size"));
+				
+				board.setFileData(fileData);
+				
+				}
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+
+		return board;
+	}
+
+	public int modifyBoard(Connection conn, Board board) {
+		int result = 0;
+
+		PreparedStatement pstmt = null;
+
+		String sql = "update board set board_grade=?,board_login_active=?,board_text=?,file_name=?,file_size=?,file_full_path=? where board_no=?";
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, board.getGrade());
+			pstmt.setString(2, board.getLoginActive());
+			pstmt.setString(3, board.getText());
+		
+			pstmt.setString(4, board.getFileData().getFileName());
+			pstmt.setLong(5, board.getFileData().getFileSize());
+			pstmt.setString(6, board.getFileData().getFileFullPath());
+			pstmt.setInt(7, board.getBoardNo());
+			
+			result = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+
+		return result;
+	}
+
+	public int plusBoardViews(Connection conn, int boardNo, int boardHits) {
+		// TODO Auto-generated method stub
+
+		PreparedStatement pstmt = null;
+
+		String sql = "update board set board_hits=? where board_no = ?";
+
+		int result = 0;
+
+		try {
+
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setInt(1, boardHits + 1);
+
+			pstmt.setInt(2, boardNo);
+
+			result = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+
+		return result;
+	}
+
+	public int changeCommentNo(Connection conn, int boardNo, int commentNo, int variation) {
+		// TODO Auto-generated method stub
+		PreparedStatement pstmt = null;
+
+		String sql = "update board set board_comment_no=? where board_no = ?";
+
+		int result = 0;
+
+		try {
+
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setInt(1, commentNo + variation);
+
+			pstmt.setInt(2, boardNo);
+
+			result = pstmt.executeUpdate();
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+
+		return result;
+	}
+
+	public ArrayList<Board> boardAllView(Connection conn, int boardTypeNo, int currentPage, int recordPerPage,String grade) {
+		// TODO Auto-generated method stub
+		
+		String sql;
+		if(grade==null)
+			sql = "select * from " + "(select board.*,row_number() over (order by board_create_date desc) as num "
+				+ "from board where board_type_no=?)" + " where num between ? and ?";
+		else {
+			sql = "select * from " + "(select board.*,row_number() over (order by board_create_date desc) as num "
+					+ "from board where board_type_no=? and board_grade='"+grade+"')" + " where num between ? and ?";
+		}
+		
+		PreparedStatement pstmt = null;
+
+		ResultSet rset = null;
+
+		ArrayList<Board> boardAllList = new ArrayList<>();
+
+		int startNum = (currentPage - 1) * recordPerPage + 1;
+
+		int endNum = currentPage * recordPerPage;
+
+		try {
+
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setInt(1, boardTypeNo);
+
+			pstmt.setInt(2, startNum);
+
+			pstmt.setInt(3, endNum);
+
+			rset = pstmt.executeQuery();
+
+			while (rset.next()) {
+				Board board = new Board();
+				board.setNum(rset.getInt("num"));
+				board.setBoardNo(rset.getInt("board_no"));
+				board.setName(rset.getString("board_name"));
+				board.setHits(rset.getInt("board_hits"));
+				board.setCommentNo(rset.getInt("board_comment_no"));
+				board.setSelectedComment(rset.getInt("board_selected_comment"));
+				board.setGrade(rset.getString("board_grade"));
+				board.setLoginActive(rset.getString("board_login_active"));
+				board.setCreaterNo(rset.getInt("board_creater_no"));
+				board.setManagerNo(rset.getInt("board_engineer_no"));
+				board.setStateNo(rset.getInt("board_state_no"));
+				board.setTypeNo(rset.getInt("board_type_no"));
+				board.setCreateDate(rset.getString("board_create_date"));
+				board.setText(rset.getString("board_text"));
+				boardAllList.add(board);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(rset);
+			JDBCTemplate.close(pstmt);
+		}
+		
+		//System.out.println(boardAllList.size());
+
+		return boardAllList;
+
+	}
+
+	public String makePageNavi(Connection conn, int boardTypeNo, int currentPage, int recordPerPage, int naviPerPage) {
+		// TODO Auto-generated method stub
+
+		String sql = "select count(*) as total from board where board_type_no=?";
+
+		PreparedStatement pstmt = null;
+
+		ResultSet rset = null;
+
+		StringBuilder sb = new StringBuilder();
+
+		int totalCount = 0;
+
+		try {
+
+			pstmt = conn.prepareStatement(sql);
+
+			pstmt.setInt(1, boardTypeNo);
+
+			rset = pstmt.executeQuery();
+
+			if (rset.next()) {
+				totalCount = rset.getInt("total");
+			}
+
+			int totalNaviCount = 0;
+
+			if (totalCount % recordPerPage == 0)
+				totalNaviCount = totalCount / recordPerPage;
+			else
+				totalNaviCount = totalCount / recordPerPage + 1;
+
+			int start = 0;
+			int end = 0;
+			
+		
+			start = ((currentPage-1) / naviPerPage)*naviPerPage + 1;
+		
+
+			end = start + naviPerPage - 1;
+
+			int prev = 0;
+			int next = 0;
+
+			if (start - 1 > 0)
+				prev = start - 1;
+
+			if (end > totalNaviCount)
+				end = totalNaviCount;
+			
+			boolean needPrev=true;
+			boolean needNext=true;
+			
+			if (start == 1)
+				needPrev = false;
+			if (end == totalNaviCount) {
+				needNext = false;
+			}
+			
+			next=end+1;
+			
+			//System.out.println("start :" + start);
+			
+			//System.out.println("end :" + end);
+			
+			//System.out.println("totalNavi :" + totalNaviCount);
+			
+			//System.out.println("totalCnt :" + totalCount);
+			
+			String boardViewServlet=null;
+			
+			if(boardTypeNo==1)
+				boardViewServlet="noticeView.do";
+			
+			if(boardTypeNo==2)
+				boardViewServlet="sharingView.do";
+			
+			if(boardTypeNo==3)
+				boardViewServlet="technicalSupportView.do";
+			
+			
+			
+
+			if(needPrev)
+				sb.append("<li class='page-item'><a class='page-link' href='/"+boardViewServlet+"?currentPage="+prev+"'>prev</a></li>");
+			else
+				sb.append("<li class='page-item disabled'><a class='page-link' href='/"+boardViewServlet+"?currentPage=" + prev + "'>prev</a></li>");
+
+			for (int i = start; i <= end; i++) {
+				if(i==currentPage)
+					sb.append("<li class='page-item'><a style='background-color:#EAEAEA' class='page-link' href='/"+boardViewServlet+"?currentPage="+i+"'>"+i+"</button></li>");
+				else
+					sb.append("<li class='page-item'><a class='page-link' href='/"+boardViewServlet+"?currentPage="+i+"'>"+i+"</a></li>");
+			}
+
+			if(needNext)
+				sb.append("<li class='page-item'><a class='page-link' href='/"+boardViewServlet+"?currentPage="+next+"'>next</a></li>");
+			else
+				sb.append("<li class='page-item disabled'><a class='page-link' href='/"+boardViewServlet+"?currentPage=" + next + "'>next</a></li>");
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(rset);
+			JDBCTemplate.close(pstmt);
+		}
+
+		return sb.toString();
+	}
+
+	public int deleteBoard(Connection conn, int boardNo) {
+		// TODO Auto-generated method stub
+		
+		int result=0;
+		
+		PreparedStatement pstmt = null;
+		
+		String sql = "delete from board where board_no = ?";
+		
+		try {
+			
+			pstmt=conn.prepareStatement(sql);
+			
+			pstmt.setInt(1, boardNo);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+		
+		return result;
+	}
+
+	public Comment selectOneComment(Connection conn, int commentNo) {
+		// TODO Auto-generated method stub
+		
+		PreparedStatement pstmt = null;
+		
+		String sql = "select * from comment_table where comment_no = ?";
+		
+		ResultSet rset = null;
+		
+		Comment selectComment = null;
+		
+		try {
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setInt(1, commentNo);
+			
+			rset = pstmt.executeQuery();
+			
+			if(rset.next()) {
+			
+				selectComment= new Comment();
+				
+				selectComment.setCommentNo(rset.getInt("comment_no"));
+				
+				selectComment.setCommentText(rset.getString("comment_text"));
+				
+				selectComment.setBoard_no(rset.getInt("board_no"));
+				
+				selectComment.setCreateDate(rset.getString("create_date"));
+				
+				selectComment.setCreaterEmail(rset.getString("comment_creater_email"));
+				
+				selectComment.setCreaterName(rset.getString("comment_creater_name"));
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(rset);
+			JDBCTemplate.close(pstmt);
+		}
+		
+		
+		
+		return selectComment;
+	}
+
+	public int selectComment(Connection conn, int boardNo, int commentNo) {
+		// TODO Auto-generated method stub
+		
+		PreparedStatement pstmt = null;
+		
+		int result = 0;
+		
+		String sql = "update board set board_selected_comment=? where board_no=?";
+		
+		try {
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setInt(1, commentNo);
+			
+			pstmt.setInt(2, boardNo);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+		
+		
+		
+		
+		return result;
+	}
+
+	public Board selectActiveBoard(Connection conn) {
+		// TODO Auto-generated method stub
+		
+		Statement stmt = null;
+		
+		String sql = "select * from Board where board_login_active='Y'";
+		
+		ResultSet rset = null;
+		
+		Board board= null;
+		
+		try {
+			
+			stmt = conn.createStatement();
+
+			rset = stmt.executeQuery(sql);
+
+			if (rset.next()) {
+				board = new Board();
+				board.setBoardNo(rset.getInt("board_no"));
+				board.setName(rset.getString("board_name"));
+				board.setHits(rset.getInt("board_hits"));
+				board.setCommentNo(rset.getInt("board_comment_no"));
+				board.setSelectedComment(rset.getInt("board_selected_comment"));
+				board.setGrade(rset.getString("board_grade"));
+				board.setCreaterNo(rset.getInt("board_creater_no"));
+				board.setTypeNo(rset.getInt("board_type_no"));
+				board.setCreateDate(rset.getString("board_create_date"));
+				board.setText(rset.getString("board_text"));
+				board.setLoginActive(rset.getString("board_login_active"));
+				
+				if(rset.getString("file_name")!=null) {
+				
+				FileData fileData = new FileData();
+				fileData.setFileFullPath(rset.getString("file_full_path"));
+				fileData.setFileName(rset.getString("file_name"));
+				fileData.setFileSize(rset.getLong("file_size"));
+				
+				board.setFileData(fileData);
+				}
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(rset);
+			JDBCTemplate.close(stmt);
+		}
+		
+		return board;
+	}
+
+	public int loginActiveAllN(Connection conn) {
+		
+		int result=0;
+		
+		Statement stmt = null;
+		
+		String sql = "update board set board_login_active='N' where board_type_no=1";
+		
+		try {
+			stmt = conn.createStatement();
+			
+			result = stmt.executeUpdate(sql);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(stmt);
+		}
+		
+		return result;
+	}
+
+	public int manage(Connection conn, int memberNo, int boardNo) {
+		// TODO Auto-generated method stub
+		
+		PreparedStatement pstmt = null;
+		
+		String sql = "update board set board_manager_no=? where board_no=?";
+		
+		int result = 0;
+		
+		try {
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setInt(1, memberNo);
+			
+			pstmt.setInt(2, boardNo);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+		return result;
+	}
+
+	public int changeState(Connection conn, int stateNo, int boardNo) {
+		// TODO Auto-generated method stub
+		
+		PreparedStatement pstmt = null;
+		
+		String sql = "update board set board_state_no=? where board_no=?";
+		
+		try {
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setInt(1,stateNo);
+			
+			pstmt.setInt(2, boardNo);
+			
+			result = pstmt.executeQuery();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			JDBCTemplate.close(pstmt);
+		}
+		
+		
+		
+		return result;
+	}
+}

@@ -1,0 +1,21 @@
+package com.sol.file.model.dao;
+
+import java.sql.Connection;
+
+import com.sol.file.model.vo.FileData;
+
+public class FileDao {
+
+	public FileData downLoadFile(Connection conn, int boardNo) {
+		// TODO Auto-generated method stub
+		
+		FileData fd = new FileData();
+		
+		String sql  = "select * from board where board_No = ?";
+		
+		
+		
+		return null;
+	}
+
+}

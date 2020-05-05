@@ -1,0 +1,14 @@
+package com.sol.file.model.dao;
+
+import java.sql.Connection;
+
+import com.sol.file.model.vo.FileData;
+
+public class FileDao {
+
+	public FileData downLoadFile(Connection conn, int boardNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

@@ -1,0 +1,112 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+ 	<%@ include file="/layout/head.jsp" %>
+  </head>
+  <body>
+    <!-- Side Navbar -->
+  	<%@ include file="/layout/sideNavi.jsp" %>
+    <div class="page">
+      <!-- navbar-->
+      <%@include file="/layout/header.jsp"%>
+      <!-- Breadcrumb-->
+      <div class="breadcrumb-holder">
+        <div class="container-fluid">
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">기술 공유       </li>
+          </ul>
+        </div>
+      </div>
+      <section>
+        <div class="container-fluid">
+          <!-- Page Header-->
+          <header> 
+            <h1 class="h3 display">기술 공유            </h1>
+          </header>
+          <div class="row">
+            <div class="col-lg-13">
+              <div class="card">
+                <div class="card-header">
+                  <h4>기술 공유 게시판</h4>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                      <thead>
+                        <tr id="check">
+                          <th>#</th>
+                          <th>제목</th>
+                          <th>내용</th>
+                          <th>중요도</th>
+                          <th>조회수</th>
+                          <th>댓글수</th>
+                        </tr>
+                      </thead>   
+                      <tbody>
+                      	<c:forEach var="board" items="${requestScope.pageBoardData.boardList}" varStatus="status">	
+                      		<tr id="boardList${status.count}">
+                      			<th scope="row">${board.num}</th>
+    	                  		<td>${board.name}</td>
+        	              		<td id="text${status.count}">        	              		
+	        	              		<!-- td에 내용 일정량까지만 추가하는 것 -->
+									<script>
+										var boardText = "${board.text}";
+										document.write(boardText.substring(0,10));									
+										$("#text${status.count}").append($("boardText"));
+										
+										$("#boardList${status.count}").mouseenter(function(){											
+											$(this).css("border","outset");				
+										});
+										
+										$("#boardList${status.count}").mouseleave(function(){											
+											$(this).css("border","none");				
+										});
+								
+										$("#boardList${status.count}").click(function(){											
+											location.href="/sharingOneView.do?boardNo=${board.boardNo}"
+										});
+						    	    </script>
+        	              		</td>
+            	          		<td>${board.grade}</td>
+                	      		<td>${board.hits}</td>
+                    	  		<td>${board.commentNo}</td>                    	  		
+                      		</tr>                      	
+                      	</c:forEach>
+                      	
+                      	
+                      </tbody>
+                    </table>
+                    <ul class="pagination justify-content-center">
+                    	${requestScope.pageBoardData.pageNavi}
+                    </ul>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <footer class="main-footer">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-6">
+              <p>Your company &copy; 2017-2019</p>
+            </div>
+            <div class="col-sm-6 text-right">
+              <p>Design by <a href="https://bootstrapious.com" class="external">Bootstrapious</a></p>
+              <!-- Please do not remove the backlink to us unless you support further theme's development at https://bootstrapious.com/donate. It is part of the license conditions and it helps me to run Bootstrapious. Thank you for understanding :)-->
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <!-- JavaScript files-->
+ 	<%@include file="/layout/javaScriptFile.jsp"%>
+    <!-- Main File-->
+    <script src="/js/front.js"></script>
+  </body>
+</html>

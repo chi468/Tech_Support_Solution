@@ -1,0 +1,86 @@
+package com.sol.comment.model.service;
+
+import java.sql.Connection;
+import java.util.ArrayList;
+
+import com.sol.board.model.dao.BoardDao;
+import com.sol.board.model.service.BoardService;
+import com.sol.board.model.vo.Board;
+import com.sol.comment.model.dao.CommentDao;
+import com.sol.comment.model.vo.Comment;
+import com.sol.common.JDBCTemplate;
+
+public class CommentService {
+
+	public ArrayList<Comment> selectCommentList(int boardNo,String createrEmail,String createrName) {
+		// TODO Auto-generated method stub
+		Connection conn = JDBCTemplate.getConnection();
+		
+		ArrayList<Comment> commentList = new CommentDao().selectCommentList(conn,boardNo,createrEmail,createrName);
+			
+		
+		JDBCTemplate.close(conn);
+		
+		return commentList;
+	}
+
+	public int insertComment(String createrEmail, String createrName, int boardNo,String commentText) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = new CommentDao().insertComment(conn, createrEmail, createrName, boardNo,commentText);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		return result;
+		
+	}
+
+	public int deleteComment(int commentNo) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = new CommentDao().deleteComment(conn,commentNo);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		return result;
+	}
+
+	public int modifyComment(int commentNo,String commentText) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = new CommentDao().modifyComment(conn,commentNo,commentText);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		return result;
+		
+	}
+
+	public Comment selectOneComment(int commentNo) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		Comment selectComment = new BoardDao().selectOneComment(conn,commentNo);
+		
+		JDBCTemplate.close(conn);
+		
+		return selectComment;
+	}
+
+}

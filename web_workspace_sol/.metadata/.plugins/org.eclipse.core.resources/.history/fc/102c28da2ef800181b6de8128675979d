@@ -1,0 +1,5 @@
+package com.sol.member.model.vo;
+
+public class SharingActivity {
+
+}

@@ -1,0 +1,442 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+   <head>
+ 	<%@ include file="/layout/head.jsp" %>
+  </head>
+  <body>
+    <!-- Side Navbar -->
+  	<%@ include file="/layout/sideNavi.jsp" %>
+    <div class="page">
+      <!-- navbar-->
+      <%@include file="/layout/header.jsp"%>
+      <!-- Breadcrumb-->
+      <div class="breadcrumb-holder">
+        <div class="container-fluid">
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/views/main.jsp">Home</a></li>
+            <li class="breadcrumb-item active">Sharing Technology      </li>
+          </ul>
+        </div>
+      </div>
+      <section>
+        <div class="container-fluid">
+          <!-- Page Header-->
+          
+          <header> 
+            <div style="text-align:right;">
+            	 <button type="button" class="btn btn-sm btn-outline-secondary">조회수</button><button type="button" class="btn btn-sm btn-outline-secondary">${requestScope.board.hits}</button> 	
+            </div>
+            <h1 class="h3 display">기술지원 게시판       </h1>
+            <br><br>
+          </header>
+
+    <main role="main">
+	
+	     
+	  <c:if test="${sessionScope.member.typeNo > 1}">
+        <div style="text-align:right">    
+     		<form action="/manage.do" method="post" >
+	  			<button id="managing" type="submit" onclick="return manage();" class="btn btn-primary my-2" style="background-color:DodgerBlue; color:white; border:0px; border-radius:10px;">해당 글 담당하기</button>
+	  			<input type="hidden" name="boardNo" value="${requestScope.board.boardNo}"/>
+	  		</form>
+	    </div>
+	  </c:if>
+	  
+	  
+      <section class="jumbotron">
+        <div class="container">
+        	<div style="text-align:right;">
+        	<button type="button" class="btn btn-sm btn-outline-secondary">작성일시</button>&nbsp;
+       		${requestScope.board.createDate}
+	        <br><br>
+	        </div>
+        	
+			<button id="state" data-toggle="modal" data-target="#stateModal" class="btn btn-info my-2" style="color:white; border:0px; border-radius:10px; display:none"> </button>
+			<br><br>
+
+        	
+        	<button type="button" class="btn btn-sm btn-outline-secondary">작성자</button>&nbsp;
+        	<a id="createrName" data-toggle="tooltip" title="${requestScope.creater.email}
+       		${requestScope.creater.phone}"> ${requestScope.creater.userName} </a>
+	        <br><br>
+	        
+	      
+	       
+	        <button type="button" class="btn btn-sm btn-outline-secondary">담당자</button>&nbsp;
+	        
+	        <c:if test="${requestScope.manager.email == null }">
+        		담당자가 아직 배정되지 않았습니다.
+				<br><br>
+			</c:if>
+	        
+	        <c:if test="${requestScope.manager.email != null }">
+        		<a id="managerName" data-toggle="tooltip" title="${requestScope.manager.email}
+       			${requestScope.manager.phone}"> ${requestScope.manager.userName} </a>
+	        	<br><br>
+			</c:if>
+	       
+          
+          <h1 class="jumbotron-heading">
+          <button type="button" class="btn btn-sm btn-outline-secondary">제목</button>&nbsp;
+          ${requestScope.board.name}</h1>
+          <br><br>
+          
+          	<p class="lead text-muted"><button type="button" class="btn btn-sm btn-outline-secondary">내용</button>&nbsp;
+         	 <div style="overflow; scroll; width:1200px; height:400px; class="btn btn-sm btn-outline-secondary">
+          		${requestScope.board.text}
+         	 </div>
+        	</p>
+          <button type="button" class="btn btn-sm btn-outline-secondary">첨부파일</button>&nbsp;
+          <a href="/fileDownLoad.do?boardNo=${requestScope.board.boardNo }">${requestScope.board.fileData.fileName}</a>
+        </div>
+      </section>
+      
+      
+     <c:if test="${sessionScope.member.memberNo eq requestScope.board.createrNo|| sessionScope.member.typeNo eq 4}">
+      <div style="text-align:right">      
+      	<form action="/noticeModify.do?boardNo=${requestScope.board.boardNo}" method="post">      		
+      		<button type="submit" class="btn btn-secondary my-2">수정</button>
+      	</form>
+      	<form action="/noticeDelete.do?boardNo=${requestScope.board.boardNo}" method="post">      	
+        	<button type="submit" class="btn btn-secondary my-2" onclick="return deleteNotice();">삭제</button>
+        </form>
+      </div>
+     </c:if>
+		
+		<br><br>
+	<center>	
+	
+	<!-- 채택된 답변을 보여주는 div -->
+	<div style="text-align:left">	
+	 <c:if test="${requestScope.selectedComment.commentNo gt 0}">
+      <c:set var="selectedComment" value="${requestScope.selectedComment }" />
+       <div class="album py-5 bg-light">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card mb-4 box-shadow">
+              <button type="button" class="btn btn-sm btn-outline-secondary" style="width:100px; background-color:pink; color:white;">채택된 답변</button>&nbsp;<br>
+                <div class="card-body">
+               	  <button type="button" class="btn btn-sm btn-outline-secondary">${selectedComment.createrName} </button>&nbsp;<br>
+                  <p class="card-text" id="commentTextView">${selectedComment.commentText}</p>	
+                  <textarea value="${selectedComment.commentText}" name="commentTextModify" style="width:500px; height:130px; display:none; resize:none;">${comment.commentText}</textarea>
+                  <div class="d-flex justify-content-between">
+                    <div style="text-align:right;" class="btn-group">
+                  		<form action="/selectComment.do?boardNo=${requestScope.board.boardNo}" method="post">
+                      		<button type="submit" onclick="return selectComment(this);" class="btn btn-secondary my-2" class="selectComment">채택 취소</button>
+                      		<input type="hidden" id="commentNo" name="commentNo" value="0"/>                      		
+                  		</form>
+                    </div>
+                    <small class="text-muted">${selectedComment.createDate}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+           </div>
+        </div>
+       </div>
+     </c:if>
+    </div>
+    
+    
+     
+		<div style="text-align:center">
+			<form action="/insertComment.do?boardNo=${requestScope.board.boardNo}" method="post">
+			   	<p style="text-align:right;">
+     				<button type="button" class="btn btn-sm btn-outline-secondary">댓글수</button><button type="button" class="btn btn-sm btn-outline-secondary">${requestScope.board.commentNo}</button>
+     				<input type="hidden" name="commentNo" value="${requestScope.board.commentNo}"/>
+     		   	</p>        
+         		<p style="text-align:center">      	
+            		<textarea style="width:500px; height:100px; resize:none;" id="commentText" name="commentText"></textarea>            		   
+            		<button id="insertComment" onclick="return commentSave();" class="btn btn-primary my-2">댓글 달기</button>
+            	</p>
+     		</form>
+     	</div> 
+     </center>
+         
+     
+	 <c:choose>
+	  <c:when test="${requestScope.commentIsEmpty eq true}">
+       <div class="album py-5 bg-light">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                	<button type="button" class="btn btn-sm btn-outline-secondary">댓글 작성자명</button>&nbsp;<br><br>
+                  <p class="card-text">댓글이 없습니다. 의견을 남겨주세요</p>
+                  <div class="d-flex justify-content-between">
+                    <div style="text-align:right;" class="btn-group">
+                    </div>
+                    <small class="text-muted">2018-11-11</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+           </div>
+        </div>
+       </div>
+      </c:when>
+      
+     <c:otherwise>
+      <c:forEach items="${requestScope.commentList}" var="comment" varStatus="status">
+       <div class="album py-5 bg-light">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card mb-4 box-shadow">
+              	<c:if test="${comment.commentNo == requestScope.selectedComment.commentNo}">
+                	<button type="button" class="btn btn-sm btn-outline-secondary" style="width:100px; background-color:pink; color:white;">채택된 답변</button>&nbsp;<br>
+                </c:if>
+                <div class="card-body">
+                	<button type="button" class="btn btn-sm btn-outline-secondary">${comment.createrName} </button>&nbsp;<br>
+                  <p class="card-text" id="commentTextView">${comment.commentText}</p>	
+                  <textarea value="${comment.commentText}" name="commentTextModify" style="width:500px; height:130px; display:none; resize:none;">${comment.commentText}</textarea>
+                  <div class="d-flex justify-content-between">      
+                    <div style="text-align:right;" class="btn-group">
+                      <c:if test="${comment.createrEmail eq sessionScope.member.email || sessionScope.member.typeNo eq 4}">
+                      	<form action="/modifyComment.do?commentNo=${comment.commentNo}&boardNo=${requestScope.board.boardNo}" method="post">
+                      		<textarea value="${comment.commentText}" id="commentText" style="width:500px; height:130px; display:none; resize:none;">${comment.commentText}</textarea>
+                      		<input type="hidden" name="commentTextModify"/>
+                      		<button type="submit" id="modifyBtn" onclick="return modifyComment(this);" class="btn btn-secondary my-2">수정</button>                      		                      	
+                      		&nbsp;
+                      	</form>
+                      	&nbsp;
+                  		<form action="/deleteComment.do?commentNo=${comment.commentNo}&boardNo=${requestScope.board.boardNo}" method="post">
+                      		<button type="submit" onclick="return deleteComment();" class="btn btn-secondary my-2">삭제</button>                      		
+                  		</form>
+                  		&nbsp; &nbsp;
+                  		<form action="/selectComment.do?boardNo=${requestScope.board.boardNo}" method="post">							
+                      		<input type="hidden" id="commentNo" name="commentNo" value="${comment.commentNo}"/>                      		
+                  		</form>
+                      </c:if>
+                    </div>
+                    <small class="text-muted">${comment.createDate}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+           </div>
+        </div>
+       </div>
+     </c:forEach>
+    </c:otherwise>
+   </c:choose>
+   
+   
+   <!-- The Modal -->
+  <div class="modal fade" id="stateModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">진행상황 변경</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+    	<form action="/changeState.do" method="post">
+        <div class="modal-body" class="col-sm-2 mb-3">
+        
+          		<select id="stateNo" name="stateNo" class="form-control">
+          			<option value="2">본사직원 할당완료</option>
+          			<option value="3">분석 중</option>
+        	  		<option value="4">추가 정보요청</option>
+    	      		<option value="5">피드백필요</option>    	      		
+	          		<option value="6">해결완료</option>	          		
+          		</select>
+          		<input type="hidden" name="boardNo" value="${requestScope.board.boardNo}"/>
+        	
+        </div>
+	       
+        <!-- Modal footer -->
+        <div class="modal-footer">
+        	<button type="submit" class="btn btn-secondary" data-dismiss="modal">완료</button>
+          	<button type="reset" class="btn btn-secondary" data-dismiss="modal">취소</button>
+        </div>
+       	</form>
+      </div>
+    </div>
+  </div>
+      
+
+  </main>
+    
+    <!-- JavaScript files-->
+ 	<%@include file="/layout/javaScriptFile.jsp"%>
+    <!-- Main File-->
+    <script src="/js/front.js"></script>
+    
+    <!-- 댓글 달기 text창 만드는 JavaScript -->
+    <script>
+    
+    	
+    	function deleteNotice(){
+			if(window.confirm("정말로 이 글을 삭제하시겠습니까?")){
+				return true;
+			}else{
+				return false;
+			}
+		};
+		
+    	function commentSave(){
+    		
+    		if($("#commentText").val()==""){
+    			alert("댓글을 입력해주세요");
+    			return false;
+    		}    			
+    		else{    			
+				return true;    			
+    		}    			
+    	}
+    
+    	function deleteComment(){
+    		if(window.confirm("정말로 이 댓글을 삭제하시겠습니까?")){
+    			return true;
+    		}else{
+    			return false;
+    		}
+    	}
+    	
+    	function modifyComment(modiBtn){
+    		
+    		var btn=modiBtn;
+    		
+    		if($(btn).html()=="완료"){    		
+				$(btn).html("수정");
+    			
+    			var thisText = $(btn).parent("form").parent("div").parent("div").siblings("textarea").val();
+    			
+    			var thisInput = $(btn).siblings("input");
+    			
+    			$(thisInput).val(thisText);
+    			
+        		return true;
+    		}	
+    		
+    		else {
+    			$(btn).parent("form").parent("div").parent("div").siblings("textarea").css("display","block");
+        		$(btn).parent("form").parent("div").parent("div").siblings("p").css("display","none");
+    			$(btn).html("완료");
+    			return false;
+    		}
+    	}
+    	
+    	var selectNo="${requestScope.selectedComment.commentNo}";
+    	
+    	if($(".selectComment").siblings("input").val()==selectNo){
+    		$(this).html("");
+    	}
+    	
+
+    	//tooltip 생성 및 팝업 이용하여 전화번호,이메일 보여주기
+    	$(document).ready(function(){
+    	    $('[data-toggle="tooltip"]').tooltip();   
+    	    
+    	    $("#createrName").click(function(){
+    	    	alert(" 작성자 :${requestScope.creater.userName}\n 이메일 : ${requestScope.creater.email}\n 전화번호 : ${requestScope.creater.phone}");
+    	    })
+    	    
+    	     $("#managerName").click(function(){
+    	    	alert(" 작성자 :${requestScope.manager.userName}\n 이메일 : ${requestScope.manager.email}\n 전화번호 : ${requestScope.manager.phone}");
+    	    })
+    	    
+    	});
+    	
+    	//해당 글 직접 담당하기
+    	
+    	
+    	//현재 게시판 진행 상태에 따라 
+    	if("${requestScope.board.stateNo}"==1){
+    		
+    		$("#state").css("display","block");
+    		
+    		$("#state").css("background-color","pink");
+    		
+    		$("#state").html("신규등록");
+    	}
+    	
+    	console.log("${requestScope.board.stateNo}");
+    	
+ 		if("${requestScope.board.stateNo}"==2){
+    		
+			$("#state").css("display","block");
+			
+    		$("#state").css("background-color","#0099ff");
+    		
+    		$("#state").html("본사직원 할당완료");
+    	}
+ 		
+		if("${requestScope.board.stateNo}"==3){
+    		
+			$("#state").css("display","block");
+			
+    		$("#state").css("background-color","#cc99ff");
+    		
+    		$("#state").html("분석중");
+    	}
+    	
+		
+		if("${requestScope.board.stateNo}"==4){
+    		
+			$("#state").css("display","block");
+			
+    		$("#state").css("background-color","#009933");
+    		
+    		$("#state").html("추가 정보요청");
+    	}
+	
+	
+		if("${requestScope.board.stateNo}"==5){
+			
+			$("#state").css("display","block");
+			
+    		$("#state").css("background-color"," #d98cb3");
+		
+			$("#state").html("피드백 필요");
+		
+		}
+	
+	
+		if("${requestScope.board.stateNo}"==6){
+		
+			$("#state").css("display","block");
+		
+			$("#state").html("해결완료");
+		}
+		
+		//1보다 커서 이미 담당직원이 할당된 경우 담당직원 할당 버튼 삭제
+		if("${requestScope.board.stateNo}">1){
+			$("#managing").css("display","none");
+		}
+		
+		
+		//해당글 담당하기 버튼 누르면 확인버튼 띄우기
+		function manage(){
+			if(window.confirm("정말로 이 글을 담당하시겠습니까? 한번 담당하면 취소 할 수 없습니다.")){
+				return true;
+			}else
+				return false;
+		}
+		
+		
+			
+			//로그인한 회원이 담당자이면
+			
+	 	$("#state").click(function(){
+	 		
+			if(!("${requestScope.manager.memberNo}" == "${sessionScope.member.memberNo}" || "${sessionScope.member.typeNo}"=="4")){
+				return false;
+		    }	
+		});
+		
+			
+
+    	
+    </script>
+  </body>
+</html>

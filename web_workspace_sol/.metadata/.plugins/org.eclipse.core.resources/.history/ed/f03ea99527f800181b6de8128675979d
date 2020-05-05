@@ -1,0 +1,83 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ page import="com.sol.board.model.vo.*" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+ 	<%@ include file="/layout/head.jsp" %>
+  </head>
+  <body>
+    <!-- Side Navbar -->
+  	<%@ include file="/layout/sideNavi.jsp" %>
+    <div class="page">
+      <!-- navbar-->
+      <%@include file="/layout/header.jsp"%>
+      <!-- Breadcrumb-->
+      <div class="breadcrumb-holder">
+        <div class="container-fluid">
+          <ul class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/views/main.jsp">Home</a></li>
+            <li class="breadcrumb-item active">Notice       </li>
+          </ul>
+        </div>
+      </div>
+      <section>
+        <div class="container-fluid">
+          <!-- Page Header-->
+          <header> 
+            <h1 class="h3 display">공지사항            </h1>
+           
+          </header>
+          
+          <c:if test="">
+          	<div style="text-align:right;">
+          	 	<button onclick="hrefForm();" class="btn btn-primary my-2">글 작성</button>
+          	</div>
+          </c:if>
+          
+          <div class="row">
+           	<jsp:include page="noticeEmergency.jsp" flush="false">				
+				<jsp:param name="pageBoardEmergency" value="${requestScope.pageBoardDataEmergency}" />								
+			</jsp:include>
+            
+            <jsp:include page="noticeNormal.jsp" flush="false">				
+				<jsp:param name="pageBoardDataNoraml" value="${requestScope.pageBoardDataNormal}" />								
+			</jsp:include>
+			
+            <jsp:include page="noticeImportance.jsp" flush="false">				
+				<jsp:param name="pageBoardDataImportance" value="${requestScope.pageBoardDataImportance}" />				
+			</jsp:include>
+            
+            <jsp:include page="noticeAll.jsp" flush="false">				
+				<jsp:param name="pageBoardData" value="${requestScope.pageBoardData}" />				
+			</jsp:include>
+          </div>
+        </div>
+      </section>
+      <footer class="main-footer">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-6">
+              <p>Technical Support &copy; 2018-2019</p>
+            </div>
+            <div class="col-sm-6 text-right">
+              <p>Design by <a href="https://bootstrapious.com" class="external">Bootstrapious</a></p>
+              <!-- Please do not remove the backlink to us unless you support further theme's development at https://bootstrapious.com/donate. It is part of the license conditions and it helps me to run Bootstrapious. Thank you for understanding :)-->
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <!-- JavaScript files-->
+ 	<%@include file="/layout/javaScriptFile.jsp"%>
+ 	<script>
+ 		function hrefForm(){
+ 			location.href="/views/notice/noticeCreate.jsp";
+ 		} 	
+ 	</script>
+ 	
+    <!-- Main File-->
+    <script src="/js/front.js"></script>
+  </body>
+</html>

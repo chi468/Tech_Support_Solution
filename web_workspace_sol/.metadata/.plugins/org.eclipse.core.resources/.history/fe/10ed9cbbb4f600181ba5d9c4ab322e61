@@ -1,0 +1,55 @@
+package com.sol.file.model.vo;
+
+public class FileData {
+	
+	int fileNo;
+	String fileName;
+	String fileFullPath;
+	int boardNo;
+	int fileSize;
+	public FileData() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public FileData(int fileNo, String fileName, String fileExtension, int boardNo, int fileSize) {
+		super();
+		this.fileNo = fileNo;
+		this.fileName = fileName;
+		this.fileExtension = fileExtension;
+		this.boardNo = boardNo;
+		this.fileSize = fileSize;
+	}
+	public int getFileNo() {
+		return fileNo;
+	}
+	public void setFileNo(int fileNo) {
+		this.fileNo = fileNo;
+	}
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	public String getFileExtension() {
+		return fileExtension;
+	}
+	public void setFileExtension(String fileExtension) {
+		this.fileExtension = fileExtension;
+	}
+	public int getBoardNo() {
+		return boardNo;
+	}
+	public void setBoardNo(int boardNo) {
+		this.boardNo = boardNo;
+	}
+	public int getFileSize() {
+		return fileSize;
+	}
+	public void setFileSize(int fileSize) {
+		this.fileSize = fileSize;
+	}
+	
+	
+
+}

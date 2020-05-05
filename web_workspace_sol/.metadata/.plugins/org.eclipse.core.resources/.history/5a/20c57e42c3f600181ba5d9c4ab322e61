@@ -1,0 +1,5 @@
+package com.sol.file.model.service;
+
+public class FileService {
+
+}

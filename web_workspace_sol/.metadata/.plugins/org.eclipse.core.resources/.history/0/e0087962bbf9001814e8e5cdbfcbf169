@@ -1,0 +1,10 @@
+package com.sol.member.model.vo;
+
+public class TechnicalSupportActivity {
+	
+	private int newRegistration;	//신규등록
+	private int analyzing;			//분석중
+	private int requestInforation		//추가 정보요청
+	
+
+}

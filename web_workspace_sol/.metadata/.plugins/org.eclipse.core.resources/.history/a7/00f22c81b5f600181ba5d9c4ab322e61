@@ -1,0 +1,11 @@
+package com.sol.file.model.vo;
+
+public class FileData {
+	
+	String fileName;
+	String fileFullPath;
+	int fileSize;
+	
+	
+	
+}

@@ -1,0 +1,246 @@
+package com.sol.board.model.service;
+
+import java.sql.Connection;
+import java.util.ArrayList;
+
+import com.sol.board.model.dao.BoardDao;
+import com.sol.board.model.vo.Board;
+import com.sol.board.model.vo.PageBoardData;
+import com.sol.common.JDBCTemplate;
+
+public class BoardService {
+
+	public int insertBoard(Board board) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = new BoardDao().insertBoard(conn,board);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		JDBCTemplate.close(conn);
+		
+		return result;
+		
+	}
+
+	public Board selectOneBoard(int boardNo) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		Board board = new BoardDao().selectOneBoard(conn,boardNo);		
+		
+		if(board==null)
+			JDBCTemplate.rollback(conn);
+		else
+			JDBCTemplate.commit(conn);
+		
+		JDBCTemplate.close(conn);
+		
+		return board;
+	}
+
+	public int modifyBoard(Board notice) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = new BoardDao().modifyBoard(conn,notice);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		JDBCTemplate.close(conn);		
+		
+		return result;
+	}
+
+	public int plusBoardViews(int boardNo,int boardHits) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = new BoardDao().plusBoardViews(conn,boardNo,boardHits);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		JDBCTemplate.close(conn);
+		
+		return result;
+		
+		
+		
+	}
+
+	public int changeCommentNo(int boardNo, int commentNo,int variation) {
+		// TODO Auto-generated method stub
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = new BoardDao().changeCommentNo(conn,boardNo,commentNo,variation);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		JDBCTemplate.close(conn);
+		
+		return result;
+		
+	}
+
+	public PageBoardData boardAllView(int boardTypeNo,int currentPage,int recordPerPage,int naviPerPage,String grade) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		ArrayList<Board> boardAllList = new BoardDao().boardAllView(conn,boardTypeNo,currentPage,recordPerPage,grade);
+		
+		PageBoardData pageBoardData = new PageBoardData();
+		
+		pageBoardData.setBoardList(boardAllList);
+		
+		String pageNavi = new BoardDao().makePageNavi(conn,boardTypeNo,currentPage,recordPerPage,naviPerPage); 
+		
+		pageBoardData.setPageNavi(pageNavi);
+		
+		JDBCTemplate.close(conn);
+		
+		return pageBoardData;
+	}	
+	
+	
+	public PageBoardData boardAllView(int boardTypeNo,int currentPage,int recordPerPage,int naviPerPage,String grade,String company) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		ArrayList<Board> boardAllList = new BoardDao().boardAllView(conn,boardTypeNo,currentPage,recordPerPage,grade,company);
+		
+		PageBoardData pageBoardData = new PageBoardData();
+		
+		pageBoardData.setBoardList(boardAllList);
+		
+		String pageNavi = new BoardDao().makePageNavi(conn,boardTypeNo,currentPage,recordPerPage,naviPerPage); 
+		
+		pageBoardData.setPageNavi(pageNavi);
+		
+		JDBCTemplate.close(conn);
+		
+		return pageBoardData;
+	}	
+
+	public String boardAllViewNavi(int i, int currentPage, int recordPerPage, int naviPerPage) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int deleteBoard(int boardNo) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = new BoardDao().deleteBoard(conn,boardNo);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		JDBCTemplate.close(conn);
+		
+		return result;
+	}
+
+	//댓글을 채택하는 기능
+	public int selectComment(int boardNo, int commentNo) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = new BoardDao().selectComment(conn,boardNo,commentNo);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		return result;
+		
+	}
+
+	public Board selectActiveBoard() {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		Board activeBoard = new BoardDao().selectActiveBoard(conn);
+		
+		JDBCTemplate.close(conn);
+		
+		return activeBoard;
+	}
+
+	public int loginActiveAllN() {
+		// TODO Auto-generated method stub
+		
+		int result=0;
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		result = new BoardDao().loginActiveAllN(conn);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		JDBCTemplate.close(conn);
+		
+		return result;
+	}
+
+	public int manage(int memberNo, int boardNo) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result1 = new BoardDao().manage(conn,memberNo, boardNo);
+		
+		int result2 = new BoardDao().changeState(conn,2,boardNo);
+		
+		if(result1>0 && result2>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		JDBCTemplate.close(conn);
+		
+		return result1;
+	}
+
+	public int changeState(int boardNo,int stateNo) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = new BoardDao().changeState(conn, stateNo, boardNo);
+		
+		if(result>0)
+			JDBCTemplate.commit(conn);
+		else
+			JDBCTemplate.rollback(conn);
+		
+		return result;
+	}
+}

@@ -1,0 +1,5 @@
+package com.sol.file.dao;
+
+public class FileDao {
+
+}

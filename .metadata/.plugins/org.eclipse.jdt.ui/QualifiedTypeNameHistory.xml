@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="com.sol.member.model.service.MemberService"/>
+<fullyQualifiedTypeName name="java.sql.Connection"/>
+<fullyQualifiedTypeName name="org.omg.CORBA.INTERNAL"/>
+<fullyQualifiedTypeName name="java.lang.Integer"/>
+<fullyQualifiedTypeName name="com.sol.board.model.service.BoardService"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="java.awt.image.ImagingOpException"/>
+<fullyQualifiedTypeName name="com.sol.member.model.vo.MainData"/>
+<fullyQualifiedTypeName name="com.sol.memeber.model.dao.MemberDao"/>
+<fullyQualifiedTypeName name="com.sol.comment.model.dao.CommentDao"/>
+<fullyQualifiedTypeName name="java.sql.ResultSet"/>
+<fullyQualifiedTypeName name="com.sol.common.JDBCTemplate"/>
+<fullyQualifiedTypeName name="com.sol.member.model.vo.TechnicalSupportActivity"/>
+<fullyQualifiedTypeName name="java.lang.Thread.State"/>
+<fullyQualifiedTypeName name="java.sql.Statement"/>
+<fullyQualifiedTypeName name="com.sol.board.model.dao.BoardDao"/>
+<fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
+<fullyQualifiedTypeName name="javax.servlet.http.HttpSession"/>
+<fullyQualifiedTypeName name="com.sol.member.model.vo.Member"/>
+</qualifiedTypeNameHistroy>

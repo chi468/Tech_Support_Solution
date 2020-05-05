@@ -1,0 +1,27 @@
+package com.sol.file.model.service;
+
+import java.sql.Connection;
+
+import com.sol.common.JDBCTemplate;
+import com.sol.file.model.dao.FileDao;
+import com.sol.file.model.vo.FileData;
+
+public class FileService {
+
+	public FileData downLoadFile(int boardNo) {
+		// TODO Auto-generated method stub
+		
+		Connection conn = JDBCTemplate.getConnection();
+
+		FileData fd = new FileDao().downLoadFile(conn,boardNo);
+		
+		if(fd!=null) {
+			
+		}
+		
+		
+		
+		return fd;
+	}
+
+}

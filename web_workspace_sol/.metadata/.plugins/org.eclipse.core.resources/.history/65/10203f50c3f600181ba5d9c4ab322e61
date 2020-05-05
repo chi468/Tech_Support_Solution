@@ -1,0 +1,16 @@
+package com.sol.file.model.service;
+
+import com.sol.file.model.vo.FileData;
+
+public class FileService {
+
+	public FileData downLoadFile(int boardNo) {
+		// TODO Auto-generated method stub
+		
+		
+		
+		
+		return null;
+	}
+
+}

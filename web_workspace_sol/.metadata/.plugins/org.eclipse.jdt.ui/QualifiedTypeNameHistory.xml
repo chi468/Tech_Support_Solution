@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.sql.DriverManager"/>
+<fullyQualifiedTypeName name="com.google.gson.Gson"/>
+<fullyQualifiedTypeName name="java.util.HashMap"/>
+<fullyQualifiedTypeName name="javax.servlet.jsp.tagext.PageData"/>
+<fullyQualifiedTypeName name="com.sol.member.model.vo.PageMemberData"/>
+<fullyQualifiedTypeName name="java.lang.Object"/>
+<fullyQualifiedTypeName name="com.so.board.model.dao.BoardDao"/>
+<fullyQualifiedTypeName name="com.sol.comment.model.dao.CommentDao"/>
+<fullyQualifiedTypeName name="org.apache.jasper.tagplugins.jstl.core.ForEach"/>
+<fullyQualifiedTypeName name="org.apache.catalina.ha.context.ReplicatedContext"/>
+<fullyQualifiedTypeName name="java.lang.reflect.Array"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="java.lang.StringBuffer"/>
+<fullyQualifiedTypeName name="java.lang.StringBuilder"/>
+<fullyQualifiedTypeName name="com.sol.file.model.service.FileService"/>
+<fullyQualifiedTypeName name="org.apache.tomcat.util.collections.ConcurrentCache"/>
+<fullyQualifiedTypeName name="java.io.FileInputStream"/>
+<fullyQualifiedTypeName name="javax.servlet.ServletOutputStream"/>
+<fullyQualifiedTypeName name="javax.websocket.SendResult"/>
+<fullyQualifiedTypeName name="com.oreilly.servlet.MultipartRequest"/>
+<fullyQualifiedTypeName name="com.oreilly.servlet.multipart.DefaultFileRenamePolicy"/>
+<fullyQualifiedTypeName name="com.sol.file.model.vo.FileData"/>
+<fullyQualifiedTypeName name="org.apache.tomcat.jni.File"/>
+<fullyQualifiedTypeName name="java.io.File"/>
+<fullyQualifiedTypeName name="com.sol.board.model.vo.Board"/>
+<fullyQualifiedTypeName name="com.sol.comment.model.service.CommentService"/>
+<fullyQualifiedTypeName name="com.sol.comment.model.vo.Comment"/>
+<fullyQualifiedTypeName name="java.lang.Integer"/>
+<fullyQualifiedTypeName name="com.sol.member.model.vo.SharingActivity"/>
+<fullyQualifiedTypeName name="javax.servlet.RequestDispatcher"/>
+<fullyQualifiedTypeName name="java.lang.Thread.State"/>
+<fullyQualifiedTypeName name="java.sql.Statement"/>
+<fullyQualifiedTypeName name="javax.servlet.http.HttpSession"/>
+<fullyQualifiedTypeName name="java.sql.Connection"/>
+<fullyQualifiedTypeName name="com.sol.member.model.service.MemberService"/>
+<fullyQualifiedTypeName name="com.sol.member.model.vo.Member"/>
+<fullyQualifiedTypeName name="com.sol.memeber.model.dao.MemberDao"/>
+<fullyQualifiedTypeName name="java.sql.PreparedStatement"/>
+<fullyQualifiedTypeName name="java.sql.ResultSet"/>
+<fullyQualifiedTypeName name="com.sol.member.model.vo.TechnicalSupportActivity"/>
+<fullyQualifiedTypeName name="com.sol.board.model.dao.BoardDao"/>
+<fullyQualifiedTypeName name="com.sol.common.JDBCTemplate"/>
+<fullyQualifiedTypeName name="com.sol.board.model.service.BoardService"/>
+<fullyQualifiedTypeName name="com.sol.board.model.vo.PageBoardData"/>
+</qualifiedTypeNameHistroy>

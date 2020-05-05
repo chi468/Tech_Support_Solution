@@ -1,0 +1,32 @@
+package com.sol.file.model.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import com.sol.file.model.vo.FileData;
+
+public class FileDao {
+
+	public FileData downLoadFile(Connection conn, int boardNo) {
+		// TODO Auto-generated method stub
+		
+		FileData fd = new FileData();
+		
+		PreparedStatement pstmt = null;
+		
+		String sql  = "select * from board where board_No = ?";
+		
+		
+		pstmt = conn.prepareStatement(sql);
+
+		pstmt.setString(1, boardNo);
+		
+		
+		
+		
+		
+		
+		return null;
+	}
+
+}

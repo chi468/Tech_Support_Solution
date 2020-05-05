@@ -1,0 +1,365 @@
+-- 테이블 순서는 관계를 고려하여 한 번에 실행해도 에러가 발생하지 않게 정렬되었습니다.
+
+
+--drop 부분
+DROP TABLE COMMENT_TABLE;
+DROP TABLE FILE_TABLE;
+DROP TABLE BOARD;
+DROP TABLE BOARD_STATE;
+drop table board_type;
+DROP TABLE ALARM;
+drop table member;
+DROP TABLE MEMBER_TYPE;
+
+
+
+
+
+--DROP SEQUENCE
+DROP SEQUENCE MEMBERNO;
+
+-- 테이블 순서는 관계를 고려하여 한 번에 실행해도 에러가 발생하지 않게 정렬되었습니다.
+
+-- MEMBER Table Create SQL
+CREATE TABLE MEMBER
+(
+    MEMBER_NO             NUMBER          NOT NULL, 
+    MEMBER_NAME           VARCHAR2(30)    NOT NULL, 
+    MEMBER_PASSWORD	VARCHAR2(30) NOT NULL,
+    MEMBER_EMAIL          VARCHAR2(50)    NOT NULL, 
+    MEMBER_PHONE          VARCHAR2(50)    NOT NULL, 
+    MEMBER_TYPE_NO        NUMBER          NOT NULL, 
+    MEMBER_COMPANY        VARCHAR2(50)    NOT NULL, 
+    MEMBER_ENROLL_DATE    DATE            NOT NULL, 
+    MEMBER_ACTIVE         VARCHAR2(10)    NOT NULL, 
+    CONSTRAINT MEMBER_PK PRIMARY KEY (MEMBER_NO)
+)
+;
+
+COMMENT ON TABLE MEMBER IS '회원'
+;
+
+COMMENT ON COLUMN MEMBER.MEMBER_NO IS '회원 번호'
+;
+
+COMMENT ON COLUMN MEMBER.MEMBER_NAME IS '회원 이름'
+;
+
+COMMENT ON COLUMN MEMBER.MEMBER_EMAIL IS '회원 이메일'
+;
+
+COMMENT ON COLUMN MEMBER.MEMBER_PHONE IS '회원 전화번호'
+;
+
+COMMENT ON COLUMN MEMBER.MEMBER_TYPE_NO IS '회원 타입'
+;
+
+COMMENT ON COLUMN MEMBER.MEBMER_COMPANY IS '회사이름'
+;
+
+COMMENT ON COLUMN MEMBER.MEMBER_ENROLL_DATE IS '가입일'
+;
+
+COMMENT ON COLUMN MEMBER.MEMBER_ACTIVE IS '사용여부'
+;
+
+
+-- BOARD_TYPE Table Create SQL
+CREATE TABLE BOARD_TYPE
+(
+    BOARD_TYPE_NO      NUMBER          NOT NULL, 
+    BOARD_TYPE_NAME    VARCHAR2(30)    NULL, 
+    CONSTRAINT BOARD_TYPE_PK PRIMARY KEY (BOARD_TYPE_NO)
+)
+;
+
+COMMENT ON TABLE BOARD_TYPE IS '게시글 타입'
+;
+
+COMMENT ON COLUMN BOARD_TYPE.BOARD_TYPE_NO IS '게시글 타입 번호'
+;
+
+COMMENT ON COLUMN BOARD_TYPE.BOARD_TYPE_NAME IS '게시글 타입 이름'
+;
+
+
+-- BOARD_STATE Table Create SQL
+CREATE TABLE BOARD_STATE
+(
+    BOARD_STATE_NO      NUMBER          NOT NULL, 
+    BOARD_STATE_NAME    VARCHAR2(50)    NULL, 
+    CONSTRAINT BOARD_STATE_PK PRIMARY KEY (BOARD_STATE_NO)
+)
+;
+
+COMMENT ON TABLE BOARD_STATE IS '게시물 상태'
+;
+
+COMMENT ON COLUMN BOARD_STATE.BOARD_STATE_NO IS '게시글 상태 번호'
+;
+
+COMMENT ON COLUMN BOARD_STATE.BOARD_STATE_NAME IS '게시글 상태 이름'
+;
+
+
+-- BOARD Table Create SQL
+CREATE TABLE BOARD
+(
+    BOARD_NO                  NUMBER           NOT NULL, 
+    BOARD_NAME                VARCHAR2(200)    NOT NULL, 
+    BOARD_HITS                NUMBER           NOT NULL, 
+    BOARD_COMMENT_NO          NUMBER           NOT NULL, 
+    BOARD_SELECTED_COMMENT    NUMBER           NULL, 
+    BOARD_GRADE               VARCHAR2(20)     NULL, 
+    BOARD_LOGIN_ACTIVE        VARCHAR2(10)     NULL, 
+    BOARD_CREATER_NO          NUMBER           NOT NULL, 
+    BOARD_ENGINEER_NO         NUMBER           NULL, 
+    BOARD_STATE_NO            NUMBER           NULL, 
+    BOARD_TYPE_NO             NUMBER           NOT NULL, 
+    BOARD_CREATE_DATE         DATE             NOT NULL, 
+    CONSTRAINT BOARD_PK PRIMARY KEY (BOARD_NO)
+)
+;
+
+COMMENT ON TABLE BOARD IS '게시글'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_NO IS '게시글 번호'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_NAME IS '게시글 이름'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_HITS IS '게시물 조회수'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_COMMENT_NO IS '게시물 댓글수'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_SELECTED_COMMENT IS '기술공유 -채택된 댓글번호'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_GRADE IS '공지사항-게시물 등급'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_LOGIN_ACTIVE IS '공지사항-로그인 화면 보여주기'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_CREATER_NO IS '게시물 작성자 번호'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_ENGINEER_NO IS '기술지원-제조사 엔지니어 담당자'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_STATE_NO IS '기술지원-진행사항'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_TYPE_NO IS '게시물 타입 번호'
+;
+
+COMMENT ON COLUMN BOARD.BOARD_CREATE_DATE IS '게시물 작성일'
+;
+
+ALTER TABLE BOARD
+    ADD CONSTRAINT FK_BOARD_BOARD_TYPE_NO_BOARD_T FOREIGN KEY (BOARD_TYPE_NO)
+        REFERENCES BOARD_TYPE (BOARD_TYPE_NO)
+;
+
+ALTER TABLE BOARD
+    ADD CONSTRAINT FK_BOARD_BOARD_CREATER_NO_MEMB FOREIGN KEY (BOARD_CREATER_NO)
+        REFERENCES MEMBER (MEMBER_NO)
+;
+
+ALTER TABLE BOARD
+    ADD CONSTRAINT FK_BOARD_BOARD_ENGINEER_NO_MEM FOREIGN KEY (BOARD_ENGINEER_NO)
+        REFERENCES MEMBER (MEMBER_NO)
+;
+
+ALTER TABLE BOARD
+    ADD CONSTRAINT FK_BOARD_BOARD_STATE_NO_BOARD_ FOREIGN KEY (BOARD_STATE_NO)
+        REFERENCES BOARD_STATE (BOARD_STATE_NO)
+;
+
+
+-- MEMBER_TYPE Table Create SQL
+CREATE TABLE MEMBER_TYPE
+(
+    MEMBER_TYPE_NO      NUMBER          NOT NULL, 
+    MEMBER_TYPE_NAME    VARCHAR2(40)    NOT NULL, 
+    CONSTRAINT MEMBER_TYPE_PK PRIMARY KEY (MEMBER_TYPE_NO)
+)
+;
+
+COMMENT ON TABLE MEMBER_TYPE IS '멤버 타입'
+;
+
+COMMENT ON COLUMN MEMBER_TYPE.MEMBER_TYPE_NO IS '멤버 타입 번호'
+;
+
+COMMENT ON COLUMN MEMBER_TYPE.MEMBER_TYPE_NAME IS '멤버 타입 이름'
+;
+
+ALTER TABLE MEMBER
+    ADD CONSTRAINT FK_MEMBER_MEMBER_TYPE_NO_ FOREIGN KEY (MEMBER_TYPE_NO)
+        REFERENCES MEMBER_TYPE (MEMBER_TYPE_NO)
+;
+
+
+-- COMMENT Table Create SQL
+CREATE TABLE COMMENT_TABLE
+(
+    COMMENT_NO       NUMBER           NOT NULL, 
+    COMMENT_TEXT     VARCHAR2(200)    NOT NULL, 
+    BOARD_TYPE_NO    NUMBER           NOT NULL, 
+    CONSTRAINT COMMENT_PK PRIMARY KEY (COMMENT_NO)
+);
+
+COMMENT ON TABLE COMMENT_TABLE IS '댓글'
+;
+
+COMMENT ON COLUMN COMMENT_TABLE.COMMENT_NO IS '댓글 번호'
+;
+
+COMMENT ON COLUMN COMMENT_TABLE.COMMENT_TEXT IS '댓글 내용'
+;
+
+COMMENT ON COLUMN COMMENT_TABLE.BOARD_TYPE_NO IS '게시물 타입 번호'
+;
+
+ALTER TABLE COMMENT_TABLE
+    ADD CONSTRAINT FK_COMMENT_BOARD_TYPE_NO_BOARD FOREIGN KEY (BOARD_TYPE_NO)
+        REFERENCES BOARD (BOARD_NO)
+;
+
+
+-- FILE Table Create SQL
+CREATE TABLE FILE_TABLE
+(
+    FILE_NO           NUMBER          NOT NULL, 
+    FILE_NAME         VARCHAR2(20)    NOT NULL, 
+    FILE_EXTENSION    VARCHAR2(20)    NOT NULL, 
+    BOARD_NO          NUMBER          NOT NULL, 
+    CONSTRAINT FILE_PK PRIMARY KEY (FILE_NO)
+);
+
+COMMENT ON TABLE FILE_TABLE IS '첨부파일'
+;
+
+COMMENT ON COLUMN FILE_TABLE.FILE_NO IS '첨부파일 번호'
+;
+
+COMMENT ON COLUMN FILE_TABLE.FILE_NAME IS '첨부파일 이름'
+;
+
+COMMENT ON COLUMN FILE_TABLE.FILE_EXTENSION IS '첨부파일 확장자'
+;
+
+COMMENT ON COLUMN FILE_TABLE.BOARD_NO IS '게시물 번호'
+;
+
+ALTER TABLE FILE_TABLE
+    ADD CONSTRAINT FK_FILE_BOARD_NO_BOARD_BOARD_N FOREIGN KEY (BOARD_NO)
+        REFERENCES BOARD (BOARD_NO)
+;
+
+
+-- ALARM Table Create SQL
+CREATE TABLE ALARM
+(
+    ALARM_NO           NUMBER           NOT NULL, 
+    ALARM_MEMBER_NO    NUMBER           NOT NULL, 
+    ALARM_TEXT         VARCHAR2(100)    NOT NULL, 
+    CONSTRAINT ALARM_PK PRIMARY KEY (ALARM_NO)
+)
+;
+
+COMMENT ON TABLE ALARM IS '알림기능'
+;
+
+COMMENT ON COLUMN ALARM.ALARM_NO IS '알람 번호'
+;
+
+COMMENT ON COLUMN ALARM.ALARM_MEMBER_NO IS '알람받는 멤버 번호'
+;
+
+COMMENT ON COLUMN ALARM.ALARM_TEXT IS '알람 내용'
+;
+
+ALTER TABLE ALARM
+    ADD CONSTRAINT FK_ALARM_ALARM_MEMBER_NO_MEMBE FOREIGN KEY (ALARM_MEMBER_NO)
+        REFERENCES MEMBER (MEMBER_NO)
+;
+
+alter table member
+    add UNIQUE (MEMBER_EMAIL);
+
+
+
+------- AI(Auto Increament 고장으로) sequence는 직접 만들어줌
+
+create sequence memberNo 
+start with 1
+INCREMENT by 1
+maxvalue 99999
+nominvalue;
+
+create sequence boardNo 
+start with 1
+INCREMENT by 1
+maxvalue 99999
+nominvalue;
+
+create sequence commentNo
+start with 1
+INCREMENT by 1
+maxvalue 99999
+nominvalue;
+
+----------- Insert문
+
+INSERT INTO MEMBER_TYPE VALUES ('1','협력사 엔지니어');
+
+INSERT INTO MEMBER_TYPE VALUES ('2','제조사 엔지니어');
+
+INSERT INTO MEMBER_TYPE VALUES ('3','제조사 엔지니어 관리자');
+
+INSERT INTO MEMBER_TYPE VALUES ('4','ADMIN');
+
+INSERT INTO MEMBER VALUES('0','admin','1234','admin@naver.com','01011112222','4','sol',sysdate,'Y');
+
+insert into board_state values(0,'다른 게시판');
+
+insert into board_type values(1,'공지사항');
+insert into board_type values(2,'기술 공유');
+insert into board_type values(3,'기술 지원');
+
+---------- Table alter문
+
+alter table board add board_text varchar2(500);
+
+alter table comment_table add create_date varchar2(50);
+
+alter table member add member_id varchar2(50);
+
+alter table comment_table rename column board_type_no to board_no;
+
+alter table comment_table add comment_creater_email varchar2(50);
+
+alter table comment_table add comment_creater_name varchar2(50);
+
+
+alter table file_table add file_full_path varchar2(50);
+
+alter table file_table add file_size number;
+
+ALTER TABLE file_table DROP COLUMN file_extension;
+
+alter table comment_table drop constraint FK_COMMENT_BOARD_TYPE_NO_BOARD;
+
+alter table comment_table
+add constraint comment_board_fk 
+foreign key (board_no)
+references board(board_no)
+on delete cascade;
+
+commit;

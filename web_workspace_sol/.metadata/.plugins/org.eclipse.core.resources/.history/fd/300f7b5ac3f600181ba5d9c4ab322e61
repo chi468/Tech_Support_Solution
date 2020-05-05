@@ -1,0 +1,18 @@
+package com.sol.file.model.service;
+
+import com.sol.file.model.dao.FileDao;
+import com.sol.file.model.vo.FileData;
+
+public class FileService {
+
+	public FileData downLoadFile(int boardNo) {
+		// TODO Auto-generated method stub
+
+		FileData fd = new FileDao().downLoadFile();
+		
+		
+		
+		return null;
+	}
+
+}

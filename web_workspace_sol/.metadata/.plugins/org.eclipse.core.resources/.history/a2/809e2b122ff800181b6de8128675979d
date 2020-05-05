@@ -1,0 +1,13 @@
+package com.sol.member.model.vo;
+
+public class SharingActivity {
+	
+	
+
+	private int totalSharingCount; 		//올린 게시글 수
+	private int selectedSharingCount;	//답변 채택 완료 게시글 수
+	private int selectedSharingCount;	//답변 채택 완료 게시글 수
+	
+	
+
+}
