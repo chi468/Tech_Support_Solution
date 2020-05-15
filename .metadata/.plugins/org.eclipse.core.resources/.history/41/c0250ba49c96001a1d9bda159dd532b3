@@ -54,7 +54,7 @@
      				marker = new google.maps.Marker({position: gangNam, map: map});
     				 }
     				</script>
-   					<script src="https://maps.googleapis.com/maps/api/js?key==initMap"
+   					<script src="https://maps.googleapis.com/maps/api/js?key=initMap"
    					async defer></script>
           	  	</div>
           	  
